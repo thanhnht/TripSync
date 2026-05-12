@@ -32,16 +32,16 @@
         ];
     @endphp
     @foreach($statCards as $card)
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-            <div class="w-10 h-10 bg-{{ $card['color'] }}-50 rounded-xl flex items-center justify-center">
-                <svg class="w-5 h-5 text-{{ $card['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $card['icon'] }}"/>
-                </svg>
-            </div>
+    <div class="bg-white rounded-xl p-5 border border-gray-100 flex items-center gap-4">
+        <div class="w-11 h-11 bg-{{ $card['color'] }}-50 rounded-xl flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-{{ $card['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $card['icon'] }}"/>
+            </svg>
         </div>
-        <p class="text-3xl font-bold text-gray-900">{{ $card['value'] }}</p>
-        <p class="text-sm text-gray-500 mt-1">{{ $card['label'] }}</p>
+        <div>
+            <p class="text-2xl font-bold text-gray-900 leading-tight">{{ $card['value'] }}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{{ $card['label'] }}</p>
+        </div>
     </div>
     @endforeach
 </div>
@@ -54,8 +54,8 @@
     </div>
 
     @if($myTrips->isEmpty())
-        <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-12 text-center">
-            <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div class="bg-white rounded-xl border border-dashed border-gray-200 p-12 text-center">
+            <div class="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
                 </svg>

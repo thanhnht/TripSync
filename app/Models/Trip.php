@@ -46,6 +46,26 @@ class Trip extends Model
         return $this->hasMany(TripMember::class);
     }
 
+    public function days()
+    {
+        return $this->hasMany(TripDay::class)->orderBy('day_number');
+    }
+
+    public function expenses()
+    {
+        return $this->hasMany(TripExpense::class)->latest();
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(TripPhoto::class)->latest();
+    }
+
+    public function checklistItems()
+    {
+        return $this->hasMany(ChecklistItem::class)->orderBy('sort_order');
+    }
+
     // ── Helpers ────────────────────────────────────────────────
 
     public function generateInviteCode(): string

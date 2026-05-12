@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Checklist\ChecklistController;
+use App\Http\Controllers\Expense\ExpenseController;
+use App\Http\Controllers\Photo\PhotoController;
+use App\Http\Controllers\Schedule\ActivityController;
+use App\Http\Controllers\Schedule\ScheduleController;
 use App\Http\Controllers\TripController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,4 +48,62 @@ Route::middleware('auth')->group(function () {
     Route::delete('/trips/{trip}/members/{user}',  [TripController::class, 'removeMember'])->name('trips.members.remove');
     Route::post('/trips/{trip}/leave',             [TripController::class, 'leaveTrip'])->name('trips.leave');
     Route::patch('/trips/{trip}/status',           [TripController::class, 'updateStatus'])->name('trips.status');
+    // Checklist routes
+    Route::prefix('trips/{trip}/checklist')->name('checklist.')->group(function () {
+        Route::get('/',              [ChecklistController::class, 'index'])->name('index');
+        Route::post('/',             [ChecklistController::class, 'store'])->name('store');
+        Route::put('/{item}',        [ChecklistController::class, 'update'])->name('update');
+        Route::delete('/{item}',     [ChecklistController::class, 'destroy'])->name('destroy');
+        Route::patch('/{item}/toggle', [ChecklistController::class, 'toggle'])->name('toggle');
+    });
+
+    // Photo routes
+    Route::prefix('trips/{trip}/photos')->name('photo.')->group(function () {
+        Route::get('/',              [PhotoController::class, 'index'])->name('index');
+        Route::post('/',             [PhotoController::class, 'store'])->name('store');
+        Route::delete('/{photo}',    [PhotoController::class, 'destroy'])->name('destroy');
+        Route::get('/{photo}/download',  [PhotoController::class, 'download'])->name('download');
+        Route::post('/download-bulk',    [PhotoController::class, 'downloadBulk'])->name('download-bulk');
+    });
+
+    // Expense routes
+    Route::prefix('trips/{trip}/expenses')->name('expense.')->group(function () {
+        Route::get('/',        [ExpenseController::class, 'index'])->name('index');
+        Route::post('/',       [ExpenseController::class, 'store'])->name('store');
+        Route::put('/{expense}',    [ExpenseController::class, 'update'])->name('update');
+        Route::delete('/{expense}', [ExpenseController::class, 'destroy'])->name('destroy');
+        Route::post('/import', [ExpenseController::class, 'importFromSchedule'])->name('import');
+    });
+
+    Route::prefix('trips/{trip}/schedule')->name('schedule.')->group(function () {
+
+        // Xem toàn bộ lịch trình
+        Route::get('/',                          [ScheduleController::class, 'index'])->name('index');
+
+        // Cập nhật ghi chú ngày
+        Route::patch('/days/{day}',              [ScheduleController::class, 'updateDay'])->name('day.update');
+
+        // Sắp xếp lại hoạt động (AJAX)
+        Route::post('/reorder',                  [ScheduleController::class, 'reorder'])->name('reorder');
+
+        // Thêm hoạt động vào 1 ngày
+        Route::post('/days/{day}/activities',    [ActivityController::class, 'store'])->name('activities.store');
+
+        // Sửa hoạt động
+        Route::put('/activities/{activity}',     [ActivityController::class, 'update'])->name('activities.update');
+
+        // Xoá hoạt động
+        Route::delete('/activities/{activity}',  [ActivityController::class, 'destroy'])->name('activities.destroy');
+
+        // Duyệt / từ chối (owner only)
+        Route::patch('/activities/{activity}/approve', [ActivityController::class, 'approve'])->name('activities.approve');
+        Route::patch('/activities/{activity}/reject',  [ActivityController::class, 'reject'])->name('activities.reject');
+
+        // Bình chọn (AJAX)
+        Route::post('/activities/{activity}/vote',     [ActivityController::class, 'vote'])->name('activities.vote');
+
+        // Comment
+        Route::post('/activities/{activity}/comments',       [ActivityController::class, 'comment'])->name('activities.comment');
+        Route::delete('/comments/{comment}',                 [ActivityController::class, 'destroyComment'])->name('comments.destroy');
+    });
 });
