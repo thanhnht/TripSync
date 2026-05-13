@@ -5,9 +5,9 @@
 
 @section('content')
 <div class="max-w-md">
-    <div class="bg-white rounded-2xl border border-gray-100 p-8">
+    <div class="bg-white rounded-xl border border-gray-100 p-8">
         <div class="text-center mb-8">
-            <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div class="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
                 </svg>
@@ -32,7 +32,7 @@
 
             <button type="submit"
                     class="w-full py-3 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark transition shadow-md shadow-primary/30">
-                Tham gia chuyến đi 🎉
+                Tham gia chuyến đi
             </button>
         </form>
 

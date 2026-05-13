@@ -9,9 +9,9 @@
         @csrf
 
         {{-- Cover image upload --}}
-        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
             <div id="cover-preview"
-                 class="relative h-48 bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center cursor-pointer group"
+                 class="relative h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center cursor-pointer group"
                  onclick="document.getElementById('cover_image').click()">
                 <img id="cover-img" src="" class="hidden absolute inset-0 w-full h-full object-cover">
                 <div id="cover-placeholder" class="text-center text-white">
@@ -29,7 +29,7 @@
         </div>
 
         {{-- Trip name --}}
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-5">
+        <div class="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
                     Tên chuyến đi <span class="text-red-500">*</span>
@@ -59,7 +59,7 @@
         </div>
 
         {{-- Dates & Status --}}
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-5">
+        <div class="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
             <h3 class="text-sm font-semibold text-gray-800">Thời gian & Trạng thái</h3>
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -84,8 +84,8 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Trạng thái</label>
                 <select name="status"
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition">
-                    <option value="planning" {{ old('status','planning') == 'planning' ? 'selected' : '' }}>📋 Đang lên kế hoạch</option>
-                    <option value="ongoing"  {{ old('status') == 'ongoing'  ? 'selected' : '' }}>🚀 Đang diễn ra</option>
+                    <option value="planning" {{ old('status','planning') == 'planning' ? 'selected' : '' }}>Đang lên kế hoạch</option>
+                    <option value="ongoing"  {{ old('status') == 'ongoing'  ? 'selected' : '' }}>Đang diễn ra</option>
                 </select>
             </div>
         </div>
@@ -98,7 +98,7 @@
             </a>
             <button type="submit"
                     class="flex-1 py-3 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark transition shadow-md shadow-primary/30">
-                Tạo chuyến đi 🗺️
+                Tạo chuyến đi
             </button>
         </div>
     </form>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', $trip->name)
 @section('page-title', $trip->name)
-@section('page-subtitle', '📍 ' . $trip->destination)
+@section('page-subtitle', $trip->destination)
 
 @section('header-actions')
     @if($trip->isOwner(Auth::user()))
@@ -66,7 +66,7 @@
             <div class="grid grid-cols-3 gap-6">
                 <div>
                     <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Điểm đến</p>
-                    <p class="text-sm font-semibold text-gray-900">📍 {{ $trip->destination }}</p>
+                    <p class="text-sm font-semibold text-gray-900">{{ $trip->destination }}</p>
                 </div>
                 <div>
                     <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Ngày đi</p>
@@ -171,13 +171,19 @@
             </div>
             <div class="flex gap-2">
                 <button onclick="navigator.clipboard.writeText('{{ $trip->invite_code }}').then(()=>alert('Đã sao chép!'))"
-                        class="flex-1 py-2 text-xs font-medium text-primary bg-blue-50 hover:bg-blue-100 rounded-lg transition">
-                    📋 Sao chép
+                        class="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                    Sao chép
                 </button>
                 <form method="POST" action="{{ route('trips.invite.regenerate', $trip) }}" class="flex-1">
                     @csrf
-                    <button class="w-full py-2 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
-                        🔄 Tạo mới
+                    <button class="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Tạo mới
                     </button>
                 </form>
             </div>
@@ -229,7 +235,7 @@
                 @csrf @method('PATCH')
                 <select name="status"
                         class="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400">
-                    @foreach(['planning' => '📋 Lên kế hoạch', 'ongoing' => '🚀 Đang diễn ra', 'completed' => '✅ Hoàn thành', 'cancelled' => '❌ Đã huỷ'] as $val => $label)
+                    @foreach(['planning' => 'Lên kế hoạch', 'ongoing' => 'Đang diễn ra', 'completed' => 'Hoàn thành', 'cancelled' => 'Đã huỷ'] as $val => $label)
                         <option value="{{ $val }}" {{ $trip->status == $val ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>

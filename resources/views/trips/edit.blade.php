@@ -17,8 +17,8 @@
         @method('PUT')
 
         {{-- Cover image --}}
-        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <div class="relative h-48 bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center cursor-pointer group"
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div class="relative h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center cursor-pointer group"
                  onclick="document.getElementById('cover_image').click()">
                 <img id="cover-img"
                      src="{{ $trip->cover_image ? $trip->cover_image_url : '' }}"
@@ -36,7 +36,7 @@
             <input type="file" id="cover_image" name="cover_image" class="hidden" accept="image/*">
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 space-y-5">
+        <div class="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Tên chuyến đi <span class="text-red-500">*</span></label>
                 <input type="text" name="name" value="{{ old('name', $trip->name) }}" required
@@ -73,7 +73,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Trạng thái</label>
                 <select name="status"
                         class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition">
-                    @foreach(['planning' => '📋 Đang lên kế hoạch', 'ongoing' => '🚀 Đang diễn ra', 'completed' => '✅ Đã hoàn thành', 'cancelled' => '❌ Đã huỷ'] as $val => $label)
+                    @foreach(['planning' => 'Đang lên kế hoạch', 'ongoing' => 'Đang diễn ra', 'completed' => 'Đã hoàn thành', 'cancelled' => 'Đã huỷ'] as $val => $label)
                         <option value="{{ $val }}" {{ old('status', $trip->status) == $val ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>

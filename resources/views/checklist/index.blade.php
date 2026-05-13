@@ -40,7 +40,9 @@
 
         @if($grouped->isEmpty())
             <div class="bg-white rounded-xl border border-dashed border-gray-200 p-16 text-center">
-                <p class="text-4xl mb-4">✅</p>
+                <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
                 <p class="text-gray-500 font-medium">Chưa có mục nào.</p>
                 <p class="text-sm text-gray-400 mt-1">Thêm đồ dùng cần chuẩn bị bên phải.</p>
             </div>

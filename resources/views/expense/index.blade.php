@@ -57,7 +57,11 @@
         {{-- Import from schedule --}}
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <span class="text-xl">🗓️</span>
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
                 <div>
                     <p class="text-sm font-semibold text-blue-800">Nhập từ lịch trình</p>
                     <p class="text-xs text-blue-600">Tự động tạo khoản chi từ các hoạt động đã duyệt có chi phí</p>

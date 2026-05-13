@@ -7,7 +7,7 @@
 <div class="max-w-2xl space-y-6">
 
     {{-- Profile info --}}
-    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+    <div class="bg-white rounded-xl border border-gray-100 p-6">
         <h3 class="text-base font-semibold text-gray-900 mb-6">Thông tin cá nhân</h3>
 
         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-5">
@@ -17,7 +17,7 @@
             <div class="flex items-center gap-5">
                 <div class="relative">
                     <img id="avatar-preview" src="{{ $user->avatar_url }}"
-                         class="w-20 h-20 rounded-2xl object-cover ring-4 ring-gray-100">
+                         class="w-20 h-20 rounded-full object-cover ring-4 ring-gray-100">
                     <label for="avatar" class="absolute -bottom-1.5 -right-1.5 w-7 h-7 bg-primary rounded-full flex items-center justify-center cursor-pointer hover:bg-primary-dark transition shadow-md">
                         <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -61,7 +61,7 @@
     </div>
 
     {{-- Change password --}}
-    <div class="bg-white rounded-2xl border border-gray-100 p-6">
+    <div class="bg-white rounded-xl border border-gray-100 p-6">
         <h3 class="text-base font-semibold text-gray-900 mb-6">Đổi mật khẩu</h3>
 
         <form method="POST" action="{{ route('profile.password') }}" class="space-y-4">

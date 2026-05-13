@@ -113,7 +113,9 @@
                     @include('schedule._activity', compact('activity', 'trip'))
                 @empty
                     <div class="py-8 text-center text-gray-400 text-sm" id="empty-{{ $day->id }}">
-                        <span class="text-3xl block mb-2">🗓️</span>
+                        <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
                         Chưa có hoạt động nào. Hãy thêm hoạt động đầu tiên!
                     </div>
                 @endforelse
@@ -137,7 +139,9 @@
     </div>
     @empty
         <div class="bg-white rounded-xl border border-dashed border-gray-200 p-16 text-center">
-            <p class="text-4xl mb-4">📅</p>
+            <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
             <p class="text-gray-500">Lịch trình chưa được tạo. Hãy kiểm tra ngày bắt đầu/kết thúc của chuyến đi.</p>
         </div>
     @endforelse
