@@ -35,8 +35,9 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Chi phí dự kiến (₫)</label>
-                    <input type="number" id="edit-estimated_cost" name="estimated_cost" min="0" step="1000"
-                           class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition">
+                    <input type="number" id="edit-estimated_cost" name="estimated_cost" min="10000" step="1000"
+                           class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition"
+                           placeholder="Tối thiểu 10.000">
                 </div>
             </div>
 

@@ -16,17 +16,17 @@
             <p class="text-sm text-gray-500 mt-1">Yêu cầu trưởng nhóm chia sẻ mã 8 ký tự</p>
         </div>
 
-        <form method="POST" action="{{ route('trips.join.post') }}" class="space-y-5">
+        <form method="POST" action="{{ route('trips.join.post') }}" class="space-y-5" novalidate>
             @csrf
 
             <div>
-                <input type="text" name="invite_code" maxlength="8" required autofocus
-                       class="w-full px-5 py-4 rounded-xl border-2 border-gray-200 text-center text-2xl font-mono font-bold tracking-widest uppercase focus:outline-none focus:border-blue-400 transition @error('invite_code') border-red-400 @enderror"
+                <input type="text" name="invite_code" maxlength="8" autofocus
+                       class="w-full px-5 py-4 rounded-xl border-2 border-gray-200 text-center text-2xl font-mono font-bold tracking-widest uppercase focus:outline-none focus:border-blue-400 transition @error('invite_code') !border-red-400 @enderror"
                        placeholder="XXXXXXXX"
                        value="{{ old('invite_code') }}"
                        oninput="this.value = this.value.toUpperCase()">
                 @error('invite_code')
-                    <p class="mt-2 text-xs text-red-600 text-center">{{ $message }}</p>
+                    <p class="mt-2 text-xs text-red-500 text-center">{{ $message }}</p>
                 @enderror
             </div>
 

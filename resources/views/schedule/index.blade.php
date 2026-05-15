@@ -277,6 +277,31 @@ async function castVote(activityId, voteType) {
 
         setVoteState(upBtn,   data.user_vote === 'up',   'text-green-600', 'text-gray-400');
         setVoteState(downBtn, data.user_vote === 'down', 'text-red-500',   'text-gray-400');
+
+        if (data.auto_approved) {
+            // Update status badge to "Đã duyệt"
+            const badge = document.getElementById(`status-badge-${activityId}`);
+            if (badge) {
+                badge.textContent = 'Đã duyệt';
+                badge.className = 'px-2 py-0.5 rounded-full text-xs font-medium border bg-green-100 text-green-700 border-green-200';
+            }
+
+            // Update left border color: yellow → green
+            const card = document.getElementById(`activity-${activityId}`);
+            if (card) {
+                card.classList.remove('border-l-yellow-400');
+                card.classList.add('border-l-green-400');
+            }
+
+            // Remove owner approve/reject buttons
+            document.getElementById(`approve-actions-${activityId}`)?.remove();
+
+            // Brief highlight to signal auto-approval
+            if (card) {
+                card.classList.add('ring-2', 'ring-green-400', 'ring-offset-1');
+                setTimeout(() => card.classList.remove('ring-2', 'ring-green-400', 'ring-offset-1'), 1500);
+            }
+        }
     } catch (e) {
         console.error('Vote error:', e);
     }
@@ -291,5 +316,63 @@ function setVoteState(btn, isActive, activeClass, inactiveClass) {
         btn.classList.add(inactiveClass);
     }
 }
+
+// ── Add activity: AJAX submit (no page reload) ─────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[id^="add-form-"] form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Clear prior errors
+            this.querySelectorAll('.ajax-error').forEach(el => el.remove());
+            this.querySelectorAll('[data-ajax-err]').forEach(el => {
+                el.classList.remove('!border-red-400');
+                el.removeAttribute('data-ajax-err');
+            });
+
+            const btn = this.querySelector('[type="submit"]');
+            const orig = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Đang thêm...';
+
+            try {
+                const res = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: new FormData(this),
+                });
+
+                if (res.ok) {
+                    window.location.reload();
+                    return;
+                }
+
+                if (res.status === 422) {
+                    const { errors } = await res.json();
+                    Object.entries(errors).forEach(([field, msgs]) => {
+                        const input = this.querySelector(`[name="${field}"]`);
+                        if (!input) return;
+                        input.classList.add('!border-red-400');
+                        input.setAttribute('data-ajax-err', '1');
+                        const p = document.createElement('p');
+                        p.className = 'mt-1 text-xs text-red-500 ajax-error';
+                        p.textContent = msgs[0];
+                        input.insertAdjacentElement('afterend', p);
+                    });
+                } else {
+                    alert('Có lỗi xảy ra, vui lòng thử lại.');
+                }
+            } catch {
+                alert('Không thể kết nối server.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = orig;
+            }
+        });
+    });
+});
 </script>
 @endpush

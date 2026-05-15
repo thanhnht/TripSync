@@ -31,7 +31,8 @@
                     <h4 class="font-semibold text-gray-900 text-sm">{{ $activity->title }}</h4>
 
                     {{-- Status badge --}}
-                    <span class="px-2 py-0.5 rounded-full text-xs font-medium border {{ $statusColors[$badge['color']] }}">
+                    <span id="status-badge-{{ $activity->id }}"
+                          class="px-2 py-0.5 rounded-full text-xs font-medium border {{ $statusColors[$badge['color']] }}">
                         {{ $badge['label'] }}
                     </span>
                 </div>
@@ -92,6 +93,7 @@
 
                 {{-- Owner: approve/reject --}}
                 @if($trip->isOwner(Auth::user()) && $activity->status === 'suggested')
+                <div id="approve-actions-{{ $activity->id }}" class="contents">
                     <form method="POST" action="{{ route('schedule.activities.approve', [$trip, $activity]) }}">
                         @csrf @method('PATCH')
                         <button type="submit" title="Duyệt"
@@ -110,6 +112,7 @@
                             </svg>
                         </button>
                     </form>
+                </div>
                 @endif
 
                 {{-- Edit (creator or owner) --}}

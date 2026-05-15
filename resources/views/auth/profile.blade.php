@@ -10,7 +10,8 @@
     <div class="bg-white rounded-xl border border-gray-100 p-6">
         <h3 class="text-base font-semibold text-gray-900 mb-6">Thông tin cá nhân</h3>
 
-        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-5">
+        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data"
+              class="space-y-5" novalidate>
             @csrf @method('PUT')
 
             {{-- Avatar --}}
@@ -31,19 +32,21 @@
                     <p class="text-xs text-gray-400 mt-1">JPG, PNG tối đa 2MB</p>
                 </div>
             </div>
+            @error('avatar') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Họ và tên</label>
-                <input type="text" name="name" value="{{ old('name', $user->name) }}" required
-                       class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition">
-                @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition @error('name') !border-red-400 @enderror">
+                @error('name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Số điện thoại</label>
                 <input type="tel" name="phone" value="{{ old('phone', $user->phone) }}"
-                       class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition @error('phone') !border-red-400 @enderror"
                        placeholder="0900 000 000">
+                @error('phone') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
             </div>
 
             <div>
@@ -64,27 +67,27 @@
     <div class="bg-white rounded-xl border border-gray-100 p-6">
         <h3 class="text-base font-semibold text-gray-900 mb-6">Đổi mật khẩu</h3>
 
-        <form method="POST" action="{{ route('profile.password') }}" class="space-y-4">
+        <form method="POST" action="{{ route('profile.password') }}" class="space-y-4" novalidate>
             @csrf @method('PUT')
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Mật khẩu hiện tại</label>
-                <input type="password" name="current_password" required
-                       class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition @error('current_password') border-red-400 @enderror">
-                @error('current_password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                <input type="password" name="current_password"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition @error('current_password') !border-red-400 @enderror">
+                @error('current_password') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Mật khẩu mới</label>
-                    <input type="password" name="password" required
-                           class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition @error('password') border-red-400 @enderror"
+                    <input type="password" name="password"
+                           class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition @error('password') !border-red-400 @enderror"
                            placeholder="Tối thiểu 8 ký tự">
-                    @error('password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    @error('password') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Xác nhận</label>
-                    <input type="password" name="password_confirmation" required
+                    <input type="password" name="password_confirmation"
                            class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition"
                            placeholder="Nhập lại mật khẩu">
                 </div>

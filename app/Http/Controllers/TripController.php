@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Trip;
+use App\Models\TripActivity;
 use App\Models\TripMember;
+use App\Http\Requests\Trip\JoinTripRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
 use Illuminate\Http\RedirectResponse;
@@ -83,7 +85,27 @@ class TripController extends Controller
 
         $trip->load(['owner', 'members' => fn($q) => $q->withPivot('role', 'joined_at')]);
 
-        return view('trips.show', compact('trip'));
+        $dayIds = $trip->days()->pluck('id');
+
+        $checklistTotal   = $trip->checklistItems()->count();
+        $checklistDone    = $trip->checklistItems()->where('is_done', true)->count();
+
+        $previewPhotos    = $trip->photos()->limit(6)->get();
+        $photoCount       = $trip->photos()->count();
+
+        $totalExpense     = $trip->expenses()->sum('amount');
+        $expenseCount     = $trip->expenses()->count();
+
+        $activityCount    = TripActivity::whereIn('trip_day_id', $dayIds)->count();
+        $activityApproved = TripActivity::whereIn('trip_day_id', $dayIds)->where('status', 'approved')->count();
+
+        return view('trips.show', compact(
+            'trip',
+            'checklistTotal', 'checklistDone',
+            'previewPhotos', 'photoCount',
+            'totalExpense', 'expenseCount',
+            'activityCount', 'activityApproved',
+        ));
     }
 
     public function edit(Trip $trip): View
@@ -134,11 +156,8 @@ class TripController extends Controller
         return view('trips.join');
     }
 
-    public function join(Request $request): RedirectResponse
+    public function join(JoinTripRequest $request): RedirectResponse
     {
-        $request->validate([
-            'invite_code' => 'required|string',
-        ]);
 
         $trip = Trip::where('invite_code', strtoupper($request->invite_code))->first();
 

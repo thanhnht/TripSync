@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\UpdateProfileRequest;
+use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,11 +27,6 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): RedirectResponse
     {
         $data = $request->validated();
-
-        if ($request->hasFile('avatar')) {
-            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
-        }
-
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
@@ -84,15 +81,12 @@ class AuthController extends Controller
         return view('auth.profile', ['user' => Auth::user()]);
     }
 
-    public function updateProfile(Request $request): RedirectResponse
+    public function updateProfile(UpdateProfileRequest $request): RedirectResponse
     {
+        /** @var User $user */
         $user = Auth::user();
 
-        $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar) {
@@ -106,13 +100,9 @@ class AuthController extends Controller
         return back()->with('success', 'Cập nhật hồ sơ thành công!');
     }
 
-    public function updatePassword(Request $request): RedirectResponse
+    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'current_password' => 'required',
-            'password'         => 'required|min:8|confirmed',
-        ]);
-
+        /** @var User $user */
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {

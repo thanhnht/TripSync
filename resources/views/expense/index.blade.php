@@ -113,30 +113,64 @@
     {{-- Right: balance + settlements --}}
     <div class="space-y-5">
 
-        {{-- Balance per member --}}
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <h3 class="text-sm font-semibold text-gray-800 mb-4">Số dư từng người</h3>
+        {{-- Spending stats per member --}}
+        <div class="bg-white rounded-xl border border-gray-100 p-5">
+            <h3 class="text-sm font-semibold text-gray-800 mb-1">Thống kê từng người</h3>
+            <p class="text-xs text-gray-400 mb-4">Đã ứng · Phần chia · Số dư</p>
+
             @if($members->isEmpty())
                 <p class="text-xs text-gray-400 text-center py-4">Chưa có thành viên.</p>
             @else
-                <div class="space-y-3">
+                <div class="divide-y divide-gray-50">
                     @foreach($members as $member)
-                    @php $bal = $balance[$member->id] ?? 0; @endphp
-                    <div class="flex items-center gap-3">
-                        <img src="{{ $member->avatar_url }}" class="w-8 h-8 rounded-full object-cover shrink-0">
-                        <div class="flex-1 min-w-0">
-                            <p class="text-xs font-medium text-gray-700 truncate">{{ $member->name }}</p>
-                            <p class="text-xs {{ $bal > 0 ? 'text-green-600' : ($bal < 0 ? 'text-red-500' : 'text-gray-400') }} font-semibold">
-                                {{ $bal > 0 ? '+' : '' }}{{ number_format($bal, 0, ',', '.') }} ₫
-                            </p>
+                    @php
+                        $paid  = $spending[$member->id]  ?? 0;
+                        $owed  = $shareOwed[$member->id] ?? 0;
+                        $bal   = $balance[$member->id]   ?? 0;
+                    @endphp
+                    <div class="py-3 first:pt-0 last:pb-0">
+                        {{-- Name row --}}
+                        <div class="flex items-center gap-2 mb-2">
+                            <img src="{{ $member->avatar_url }}"
+                                 class="w-7 h-7 rounded-full object-cover shrink-0">
+                            <span class="text-[13px] font-semibold text-gray-800 flex-1 truncate">
+                                {{ $member->name }}
+                            </span>
+                            @if($bal > 0)
+                                <span class="text-[10px] font-semibold bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full shrink-0">Được nhận</span>
+                            @elseif($bal < 0)
+                                <span class="text-[10px] font-semibold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full shrink-0">Cần trả</span>
+                            @else
+                                <span class="text-[10px] font-semibold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full shrink-0">Hoà</span>
+                            @endif
                         </div>
-                        @if($bal > 0)
-                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Được nhận</span>
-                        @elseif($bal < 0)
-                            <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Cần trả</span>
-                        @else
-                            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Cân bằng</span>
-                        @endif
+
+                        {{-- Stats row --}}
+                        <div class="grid grid-cols-3 gap-1 pl-9">
+                            <div class="bg-slate-50 rounded-lg px-2 py-1.5 text-center">
+                                <p class="text-[10px] text-gray-400 leading-none mb-0.5">Đã ứng</p>
+                                <p class="text-[12px] font-semibold text-gray-800 leading-tight">
+                                    {{ $paid > 0 ? number_format($paid, 0, ',', '.') : '—' }}
+                                    @if($paid > 0)<span class="text-[9px] font-normal text-gray-400">₫</span>@endif
+                                </p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg px-2 py-1.5 text-center">
+                                <p class="text-[10px] text-gray-400 leading-none mb-0.5">Phần chia</p>
+                                <p class="text-[12px] font-semibold text-gray-800 leading-tight">
+                                    {{ $owed > 0 ? number_format($owed, 0, ',', '.') : '—' }}
+                                    @if($owed > 0)<span class="text-[9px] font-normal text-gray-400">₫</span>@endif
+                                </p>
+                            </div>
+                            <div class="rounded-lg px-2 py-1.5 text-center
+                                {{ $bal > 0 ? 'bg-green-50' : ($bal < 0 ? 'bg-red-50' : 'bg-slate-50') }}">
+                                <p class="text-[10px] text-gray-400 leading-none mb-0.5">Số dư</p>
+                                <p class="text-[12px] font-semibold leading-tight
+                                    {{ $bal > 0 ? 'text-green-600' : ($bal < 0 ? 'text-red-500' : 'text-gray-400') }}">
+                                    {{ $bal > 0 ? '+' : '' }}{{ number_format($bal, 0, ',', '.') }}
+                                    <span class="text-[9px] font-normal opacity-70">₫</span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                     @endforeach
                 </div>
@@ -228,6 +262,9 @@ function openExpenseModal(id) {
     const modal = document.getElementById('edit-expense-modal');
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    const editForm = document.getElementById('edit-expense-form');
+    if (editForm) attachExpenseAjax(editForm, () => { closeExpenseModal(); window.location.reload(); });
 }
 
 function closeExpenseModal() {
@@ -328,5 +365,50 @@ function buildEditForm(e) {
 function escHtml(str) {
     return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+function attachExpenseAjax(form, onSuccess) {
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        this.querySelectorAll('.ajax-error').forEach(el => el.remove());
+        this.querySelectorAll('[data-ajax-err]').forEach(el => {
+            el.classList.remove('!border-red-400');
+            el.removeAttribute('data-ajax-err');
+        });
+        const btn = this.querySelector('[type="submit"]');
+        const orig = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Đang lưu...';
+        try {
+            const res = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: new FormData(this),
+            });
+            if (res.ok) { onSuccess(); return; }
+            if (res.status === 422) {
+                const { errors } = await res.json();
+                Object.entries(errors).forEach(([field, msgs]) => {
+                    const input = this.querySelector(`[name="${field}"]`);
+                    if (!input) return;
+                    input.classList.add('!border-red-400');
+                    input.setAttribute('data-ajax-err', '1');
+                    const p = document.createElement('p');
+                    p.className = 'mt-1 text-xs text-red-500 ajax-error';
+                    p.textContent = msgs[0];
+                    input.insertAdjacentElement('afterend', p);
+                });
+            } else { alert('Có lỗi xảy ra, vui lòng thử lại.'); }
+        } catch { alert('Không thể kết nối server.'); }
+        finally { btn.disabled = false; btn.textContent = orig; }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const addForm = document.getElementById('add-expense-form');
+    if (addForm) attachExpenseAjax(addForm, () => window.location.reload());
+});
 </script>
 @endpush

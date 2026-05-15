@@ -22,7 +22,7 @@ class StoreActivityRequest extends FormRequest
             'start_time'     => 'nullable|date_format:H:i',
             'end_time'       => 'nullable|date_format:H:i|after_or_equal:start_time',
             'location'       => 'nullable|string|max:255',
-            'estimated_cost' => 'nullable|integer|min:0',
+            'estimated_cost' => 'nullable|integer|min:10000',
             'reference_url'  => 'nullable|url|max:500',
         ];
     }
@@ -37,7 +37,7 @@ class StoreActivityRequest extends FormRequest
             'end_time.date_format'    => 'Giờ kết thúc không hợp lệ (HH:MM).',
             'end_time.after_or_equal' => 'Giờ kết thúc phải sau giờ bắt đầu.',
             'estimated_cost.integer'  => 'Chi phí phải là số nguyên.',
-            'estimated_cost.min'      => 'Chi phí không được âm.',
+            'estimated_cost.min'      => 'Chi phí tối thiểu là 10.000 ₫.',
             'reference_url.url'       => 'Link tham khảo không hợp lệ.',
         ];
     }

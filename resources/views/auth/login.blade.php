@@ -3,20 +3,20 @@
 
 @section('content')
 <div class="mb-6">
-    <h2 class="text-xl font-bold text-gray-900">Chào mừng trở lại 👋</h2>
+    <h2 class="text-xl font-bold text-gray-900">Chào mừng trở lại</h2>
     <p class="mt-1 text-sm text-gray-500">Đăng nhập để tiếp tục lên kế hoạch chuyến đi.</p>
 </div>
 
-<form method="POST" action="{{ route('login') }}" class="space-y-4">
+<form method="POST" action="{{ route('login') }}" class="space-y-4" novalidate>
     @csrf
 
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-        <input type="email" name="email" value="{{ old('email') }}" required autofocus
+        <input type="email" name="email" value="{{ old('email') }}" autofocus
                class="input-field @error('email') !border-red-400 @enderror"
                placeholder="you@example.com">
         @error('email')
-            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
         @enderror
     </div>
 
@@ -27,11 +27,11 @@
                 Quên mật khẩu?
             </a>
         </div>
-        <input type="password" name="password" required
+        <input type="password" name="password"
                class="input-field @error('password') !border-red-400 @enderror"
                placeholder="••••••••">
         @error('password')
-            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
         @enderror
     </div>
 

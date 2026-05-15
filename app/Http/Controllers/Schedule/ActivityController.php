@@ -111,10 +111,22 @@ class ActivityController extends Controller
 
         $activity->load('votes');
 
+        // Auto-approve when every member has voted "up"
+        $autoApproved = false;
+        if ($activity->status === 'suggested') {
+            $memberCount = $trip->members()->count();
+            if ($memberCount > 0 && $activity->up_votes_count >= $memberCount) {
+                $activity->update(['status' => 'approved']);
+                $autoApproved = true;
+            }
+        }
+
         return response()->json([
-            'up_count'   => $activity->up_votes_count,
-            'down_count' => $activity->down_votes_count,
-            'user_vote'  => $userVote,
+            'up_count'     => $activity->up_votes_count,
+            'down_count'   => $activity->down_votes_count,
+            'user_vote'    => $userVote,
+            'auto_approved'=> $autoApproved,
+            'status'       => $activity->status,
         ]);
     }
 

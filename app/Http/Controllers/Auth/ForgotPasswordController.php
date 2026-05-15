@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,11 +22,8 @@ class ForgotPasswordController extends Controller
         return view('auth.forgot-password');
     }
 
-    public function sendResetLink(Request $request): RedirectResponse
+    public function sendResetLink(ForgotPasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
 
         $status = Password::sendResetLink(
             $request->only('email')
@@ -48,13 +47,8 @@ class ForgotPasswordController extends Controller
         ]);
     }
 
-    public function resetPassword(Request $request): RedirectResponse
+    public function resetPassword(ResetPasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'token'    => 'required',
-            'email'    => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),

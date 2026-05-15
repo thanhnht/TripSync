@@ -3,9 +3,11 @@
 @php
     $isEdit = isset($expense);
     $val = fn(string $field, $default = '') => old($field, $isEdit ? $expense->{$field} : $default);
+    $inputClass = 'w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition';
+    $errorClass = '!border-red-400';
 @endphp
 
-<form method="POST" action="{{ $formAction }}" id="{{ $isEdit ? 'edit-expense-form' : 'add-expense-form' }}">
+<form method="POST" action="{{ $formAction }}" id="{{ $isEdit ? 'edit-expense-form' : 'add-expense-form' }}" novalidate>
     @csrf
     @if($method === 'PUT') @method('PUT') @endif
 
@@ -13,24 +15,30 @@
         {{-- Title --}}
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Tên khoản chi <span class="text-red-500">*</span></label>
-            <input type="text" name="title" value="{{ $val('title') }}" required
-                   class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition"
+            <input type="text" name="title" value="{{ $val('title') }}"
+                   class="{{ $inputClass }} @error('title') {{ $errorClass }} @enderror"
                    placeholder="VD: Tiền khách sạn, Ăn trưa...">
+            @error('title') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
         </div>
 
         {{-- Amount --}}
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Số tiền (₫) <span class="text-red-500">*</span></label>
-            <input type="number" name="amount" value="{{ $val('amount', 0) }}" min="0" required
-                   class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition"
-                   placeholder="0">
+            <input type="number" name="amount" value="{{ $val('amount', '') }}" step="1000"
+                   class="{{ $inputClass }} @error('amount') {{ $errorClass }} @enderror"
+                   placeholder="Tối thiểu 10.000">
+            @error('amount')
+                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+            @else
+                <p class="mt-1 text-xs text-gray-400">Tối thiểu 10.000 ₫</p>
+            @enderror
         </div>
 
         {{-- Paid by --}}
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Người trả <span class="text-red-500">*</span></label>
-            <select name="paid_by" required
-                    class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition">
+            <select name="paid_by"
+                    class="{{ $inputClass }} @error('paid_by') {{ $errorClass }} @enderror">
                 @foreach($members as $member)
                     <option value="{{ $member->id }}"
                         {{ (int)$val('paid_by', Auth::id()) === $member->id ? 'selected' : '' }}>
@@ -38,6 +46,7 @@
                     </option>
                 @endforeach
             </select>
+            @error('paid_by') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
         </div>
 
         {{-- Split method --}}
@@ -90,8 +99,9 @@
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Ghi chú</label>
             <textarea name="note" rows="2"
-                      class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 transition resize-none"
+                      class="{{ $inputClass }} resize-none @error('note') {{ $errorClass }} @enderror"
                       placeholder="Ghi chú thêm...">{{ $val('note') }}</textarea>
+            @error('note') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
         </div>
     </div>
 

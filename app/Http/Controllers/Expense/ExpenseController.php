@@ -30,8 +30,24 @@ class ExpenseController extends Controller
         $settlements = $this->minimumSettlements($balance);
         $totalExpense = $expenses->sum('amount');
 
+        // Per-member spending stats
+        $spending  = array_fill_keys($members->pluck('id')->toArray(), 0); // total paid out
+        $shareOwed = array_fill_keys($members->pluck('id')->toArray(), 0); // total allocated share
+
+        foreach ($expenses as $expense) {
+            if (array_key_exists($expense->paid_by, $spending)) {
+                $spending[$expense->paid_by] += $expense->amount;
+            }
+            foreach ($expense->splits as $split) {
+                if (array_key_exists($split->user_id, $shareOwed)) {
+                    $shareOwed[$split->user_id] += $split->amount;
+                }
+            }
+        }
+
         return view('expense.index', compact(
-            'trip', 'expenses', 'members', 'balance', 'settlements', 'totalExpense'
+            'trip', 'expenses', 'members', 'balance', 'settlements', 'totalExpense',
+            'spending', 'shareOwed'
         ));
     }
 
