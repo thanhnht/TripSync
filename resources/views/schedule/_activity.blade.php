@@ -10,6 +10,11 @@
         'rejected' => 'border-l-red-400',
         'suggested'=> 'border-l-yellow-400',
     ];
+    $votedCount      = $activity->up_votes_count + $activity->down_votes_count;
+    $allVoted        = $votedCount >= $memberCount;
+    $leaderCanDecide = $activity->status === 'suggested' && $allVoted
+                       && $activity->up_votes_count < $memberCount
+                       && $activity->down_votes_count < $memberCount;
 @endphp
 
 <div class="group relative bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all
@@ -91,9 +96,9 @@
             {{-- Action buttons (right) --}}
             <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition">
 
-                {{-- Owner: approve/reject --}}
+                {{-- Owner: approve/reject (only when all voted + mixed result) --}}
                 @if($trip->isOwner(Auth::user()) && $activity->status === 'suggested')
-                <div id="approve-actions-{{ $activity->id }}" class="contents">
+                <div id="approve-actions-{{ $activity->id }}" class="{{ $leaderCanDecide ? 'contents' : 'hidden' }}">
                     <form method="POST" action="{{ route('schedule.activities.approve', [$trip, $activity]) }}">
                         @csrf @method('PATCH')
                         <button type="submit" title="Duyệt"
@@ -173,6 +178,15 @@
                     </svg>
                     <span id="down-count-{{ $activity->id }}">{{ $activity->down_votes_count }}</span>
                 </button>
+
+                {{-- Vote progress (suggested activities only) --}}
+                @if($activity->status === 'suggested')
+                <span id="vote-progress-{{ $activity->id }}"
+                      class="text-xs {{ $leaderCanDecide ? 'font-medium text-amber-500' : 'text-gray-400' }}">
+                    {{ $votedCount }}/{{ $memberCount }}
+                    @if($leaderCanDecide) · Trưởng nhóm quyết @endif
+                </span>
+                @endif
 
                 <button onclick="toggleComments({{ $activity->id }})"
                         class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-primary transition">

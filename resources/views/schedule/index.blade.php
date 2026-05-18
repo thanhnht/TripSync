@@ -110,7 +110,7 @@
             {{-- Activities list --}}
             <div class="px-6 py-4 space-y-3" id="activities-{{ $day->id }}">
                 @forelse($day->activities as $activity)
-                    @include('schedule._activity', compact('activity', 'trip'))
+                    @include('schedule._activity', compact('activity', 'trip', 'memberCount'))
                 @empty
                     <div class="py-8 text-center text-gray-400 text-sm" id="empty-{{ $day->id }}">
                         <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -278,29 +278,62 @@ async function castVote(activityId, voteType) {
         setVoteState(upBtn,   data.user_vote === 'up',   'text-green-600', 'text-gray-400');
         setVoteState(downBtn, data.user_vote === 'down', 'text-red-500',   'text-gray-400');
 
+        // Update vote progress text
+        const progress = document.getElementById(`vote-progress-${activityId}`);
+        if (progress) {
+            if (data.leader_can_decide) {
+                progress.textContent = `${data.total_voted}/${data.member_count} · Trưởng nhóm quyết`;
+                progress.className = 'text-xs font-medium text-amber-500';
+            } else {
+                progress.textContent = `${data.total_voted}/${data.member_count}`;
+                progress.className = 'text-xs text-gray-400';
+            }
+        }
+
+        // Show/hide approve-reject buttons based on leader_can_decide
+        const approveActions = document.getElementById(`approve-actions-${activityId}`);
+        if (approveActions) {
+            if (data.leader_can_decide) {
+                approveActions.classList.remove('hidden');
+                approveActions.classList.add('contents');
+            } else {
+                approveActions.classList.add('hidden');
+                approveActions.classList.remove('contents');
+            }
+        }
+
         if (data.auto_approved) {
-            // Update status badge to "Đã duyệt"
             const badge = document.getElementById(`status-badge-${activityId}`);
             if (badge) {
                 badge.textContent = 'Đã duyệt';
                 badge.className = 'px-2 py-0.5 rounded-full text-xs font-medium border bg-green-100 text-green-700 border-green-200';
             }
-
-            // Update left border color: yellow → green
             const card = document.getElementById(`activity-${activityId}`);
             if (card) {
                 card.classList.remove('border-l-yellow-400');
                 card.classList.add('border-l-green-400');
-            }
-
-            // Remove owner approve/reject buttons
-            document.getElementById(`approve-actions-${activityId}`)?.remove();
-
-            // Brief highlight to signal auto-approval
-            if (card) {
                 card.classList.add('ring-2', 'ring-green-400', 'ring-offset-1');
                 setTimeout(() => card.classList.remove('ring-2', 'ring-green-400', 'ring-offset-1'), 1500);
             }
+            approveActions?.remove();
+            progress?.remove();
+        }
+
+        if (data.auto_rejected) {
+            const badge = document.getElementById(`status-badge-${activityId}`);
+            if (badge) {
+                badge.textContent = 'Từ chối';
+                badge.className = 'px-2 py-0.5 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200';
+            }
+            const card = document.getElementById(`activity-${activityId}`);
+            if (card) {
+                card.classList.remove('border-l-yellow-400');
+                card.classList.add('border-l-red-400', 'opacity-60');
+                card.classList.add('ring-2', 'ring-red-400', 'ring-offset-1');
+                setTimeout(() => card.classList.remove('ring-2', 'ring-red-400', 'ring-offset-1'), 1500);
+            }
+            approveActions?.remove();
+            progress?.remove();
         }
     } catch (e) {
         console.error('Vote error:', e);

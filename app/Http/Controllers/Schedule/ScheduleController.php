@@ -31,9 +31,10 @@ class ScheduleController extends Controller
         $totalCost       = $days->sum('total_cost');
         $totalActivities = $days->flatMap->activities->count();
         $approvedCount   = $days->flatMap->activities->where('status', 'approved')->count();
+        $memberCount     = $trip->members()->count();
 
         return view('schedule.index', compact(
-            'trip', 'days', 'totalCost', 'totalActivities', 'approvedCount'
+            'trip', 'days', 'totalCost', 'totalActivities', 'approvedCount', 'memberCount'
         ));
     }
 

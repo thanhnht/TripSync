@@ -65,6 +65,9 @@ class ActivityController extends Controller
     {
         $this->authorizeOwner($trip);
         abort_unless($activity->day->trip_id === $trip->id, 404);
+        abort_unless($activity->status === 'suggested', 422);
+
+        $this->assertLeaderCanDecide($trip, $activity);
 
         $activity->update(['status' => 'approved']);
 
@@ -75,6 +78,9 @@ class ActivityController extends Controller
     {
         $this->authorizeOwner($trip);
         abort_unless($activity->day->trip_id === $trip->id, 404);
+        abort_unless($activity->status === 'suggested', 422);
+
+        $this->assertLeaderCanDecide($trip, $activity);
 
         $activity->update(['status' => 'rejected']);
 
@@ -111,22 +117,35 @@ class ActivityController extends Controller
 
         $activity->load('votes');
 
-        // Auto-approve when every member has voted "up"
+        $memberCount  = $trip->members()->count();
+        $totalVoted   = $activity->up_votes_count + $activity->down_votes_count;
         $autoApproved = false;
-        if ($activity->status === 'suggested') {
-            $memberCount = $trip->members()->count();
-            if ($memberCount > 0 && $activity->up_votes_count >= $memberCount) {
+        $autoRejected = false;
+        $leaderCanDecide = false;
+
+        if ($activity->status === 'suggested' && $memberCount > 0) {
+            $allVoted = $totalVoted >= $memberCount;
+            if ($allVoted && $activity->up_votes_count >= $memberCount) {
                 $activity->update(['status' => 'approved']);
                 $autoApproved = true;
+            } elseif ($allVoted && $activity->down_votes_count >= $memberCount) {
+                $activity->update(['status' => 'rejected']);
+                $autoRejected = true;
+            } elseif ($allVoted) {
+                $leaderCanDecide = true;
             }
         }
 
         return response()->json([
-            'up_count'     => $activity->up_votes_count,
-            'down_count'   => $activity->down_votes_count,
-            'user_vote'    => $userVote,
-            'auto_approved'=> $autoApproved,
-            'status'       => $activity->status,
+            'up_count'          => $activity->up_votes_count,
+            'down_count'        => $activity->down_votes_count,
+            'user_vote'         => $userVote,
+            'total_voted'       => $totalVoted,
+            'member_count'      => $memberCount,
+            'auto_approved'     => $autoApproved,
+            'auto_rejected'     => $autoRejected,
+            'leader_can_decide' => $leaderCanDecide,
+            'status'            => $activity->status,
         ]);
     }
 
@@ -157,6 +176,20 @@ class ActivityController extends Controller
         $comment->delete();
 
         return back()->with('success', 'Đã xoá bình luận.');
+    }
+
+    private function assertLeaderCanDecide(Trip $trip, TripActivity $activity): void
+    {
+        $activity->loadMissing('votes');
+        $memberCount = $trip->members()->count();
+        $upCount     = $activity->up_votes_count;
+        $downCount   = $activity->down_votes_count;
+        $totalVoted  = $upCount + $downCount;
+
+        // Must wait for all members to vote first
+        abort_if($totalVoted < $memberCount, 403, 'Chờ tất cả thành viên vote trước khi quyết định.');
+        // If unanimous, auto-decision should have handled it
+        abort_if($upCount >= $memberCount || $downCount >= $memberCount, 403, 'Kết quả đã rõ ràng, không cần quyết định thủ công.');
     }
 
     private function authorizeMember(Trip $trip): void
