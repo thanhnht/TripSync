@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/{item}',        [ChecklistController::class, 'update'])->name('update');
         Route::delete('/{item}',     [ChecklistController::class, 'destroy'])->name('destroy');
         Route::patch('/{item}/toggle', [ChecklistController::class, 'toggle'])->name('toggle');
-        Route::patch('/{item}/assign', [ChecklistController::class, 'assign'])->name('assign');
+        Route::post('/{item}/assign', [ChecklistController::class, 'assign'])->name('assign');
     });
 
     // Photo routes

@@ -102,7 +102,7 @@ class ChecklistController extends Controller
     {
         $this->authorizeMember($trip);
         abort_unless($item->trip_id === $trip->id, 404);
-        abort_unless($this->canManageItem($trip, $item), 403);
+        abort_unless($this->canToggleItem($trip, $item), 403);
 
         $item->update(['is_done' => !$item->is_done]);
 
@@ -115,6 +115,15 @@ class ChecklistController extends Controller
             'total'   => $total,
             'percent' => $total > 0 ? round($done / $total * 100) : 0,
         ]);
+    }
+
+    private function canToggleItem(Trip $trip, ChecklistItem $item): bool
+    {
+        if ($trip->isOwner(Auth::user())) return true;
+        // Assigned → only assignee can tick
+        if ($item->assigned_to) return $item->assigned_to === Auth::id();
+        // Not yet assigned → creator can tick
+        return $item->created_by === Auth::id();
     }
 
     private function canManageItem(Trip $trip, ChecklistItem $item): bool

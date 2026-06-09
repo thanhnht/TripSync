@@ -224,7 +224,7 @@
                     <p class="text-[11px] text-gray-400 mt-1">Chia sẻ để mời thành viên</p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="navigator.clipboard.writeText('{{ $trip->invite_code }}').then(()=>alert('Đã sao chép!'))"
+                    <button onclick="copyCode('{{ $trip->invite_code }}')"
                             class="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -302,3 +302,21 @@
     </div>{{-- /main grid --}}
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function copyCode(code) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => alert('Đã sao chép!'));
+    } else {
+        const i = document.createElement('input');
+        i.value = code;
+        document.body.appendChild(i);
+        i.select();
+        document.execCommand('copy');
+        document.body.removeChild(i);
+        alert('Đã sao chép!');
+    }
+}
+</script>
+@endpush

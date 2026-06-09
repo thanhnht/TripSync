@@ -414,10 +414,36 @@ function toggleAssignDropdown(id, event) {
     toggleDropdown(`assign-menu-${id}`, event);
 }
 
-function selectAssignee(itemId, memberId) {
-    document.getElementById(`assign-input-${itemId}`).value = memberId;
-    document.getElementById(`assign-form-${itemId}`).submit();
-}
+// ── Assign via event delegation (handles clicks on [data-assign-url] and their children) ──
+document.addEventListener('click', async function(e) {
+    const btn = e.target.closest('[data-assign-url]');
+    if (!btn) return;
+
+    const url      = btn.dataset.assignUrl;
+    const memberId = btn.dataset.memberId;
+
+    closeAllDropdowns();
+
+    const body = new URLSearchParams();
+    body.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+    if (memberId) body.append('assigned_to', memberId);
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString(),
+        });
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            const txt = await res.text();
+            alert('Lỗi ' + res.status + ': ' + txt);
+        }
+    } catch (e) {
+        alert('Lỗi: ' + e.message);
+    }
+});
 
 // ── Category custom select ────────────────────────────────────────────
 const categoryIcons = @json(array_flip($defaultCats));
